@@ -1,7 +1,8 @@
 /*
 * Mustafa Gökgöz - 1661222
 * Barış Can Kurtulmuş - 1661313	
-* Kağan
+* Kağan ŞENGEZER - 16
+* Onur 
 *
 *
 *
