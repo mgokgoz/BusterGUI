@@ -152,6 +152,8 @@ public class TestCreator extends JFrame {
 				"{\n\t\""+exp.getText()+"\": function() {\n"
 				+"\t\t"+getAssert()+"("+funcs.getSelectedItem().toString()+"("+params.getText()+"),THIS);\n\t}\n});\n"; // TODO textbox should be added to get value to be tested against, for now it is hard-coded
 		System.out.print(total);
+		System.out.print(total);
+		
 	}
 
 	private String getAssert() {
