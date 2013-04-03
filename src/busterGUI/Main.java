@@ -41,6 +41,7 @@ public class Main extends JFrame {
 	private JTextField path;
 	private JTextField pPath;
 	private JTextField gPath;
+	private TestCreator tc;
 
 	/**
 	 * Launch the application.
@@ -57,8 +58,8 @@ public class Main extends JFrame {
 			}
 		});
 	}
-	public Main() throws PropertyVetoException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException{
-		UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+	public Main() throws PropertyVetoException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IOException{
+		//UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
 		setTitle("Buster GUI");
 		setType(Type.UTILITY);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -66,7 +67,7 @@ public class Main extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(UIManager.getBorder("CheckBox.border"));
 		setContentPane(contentPane);
-		
+		tc=new TestCreator();
 		final JInternalFrame tools = new JInternalFrame("Tools");
 		tools.setClosed(true);
 		tools.setClosable(true);
@@ -204,6 +205,7 @@ public class Main extends JFrame {
 		JButton btnTools = new JButton("Tools");
 		btnTools.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				tc.setVisible(true);
 				try {
 					if(tools.isClosed()){
 						tools.setClosed(false);

@@ -14,8 +14,13 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.DefaultComboBoxModel;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class TestCreator extends JFrame {
 
@@ -23,8 +28,11 @@ public class TestCreator extends JFrame {
 	private JTextField params;
 	private JTextField casename;
 	private JTextField exp;
+	private JComboBox type;
+	private JComboBox funcs;
+	private JComboBox source;
 	private Hashtable<String, ArrayList<String>> table;
-
+	private String total;
 	/**
 	 * Launch the application.
 	 */
@@ -45,23 +53,24 @@ public class TestCreator extends JFrame {
 	 * Create the frame.
 	 * @throws IOException 
 	 */
+	
 	public TestCreator() throws IOException {
+		total=new String();
 		GenerateTestCase gtc=new GenerateTestCase();
 		gtc.checktestCase();
 		table=gtc.getFuncJStable();
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 544, 503);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		final JComboBox funcs = new JComboBox();
+		funcs = new JComboBox();
 		funcs.setBounds(12, 102, 154, 24);
 		contentPane.add(funcs);
 		
-		final JComboBox source = new JComboBox();
+		source = new JComboBox();
 		source.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				funcs.removeAllItems();
@@ -98,6 +107,11 @@ public class TestCreator extends JFrame {
 		
 		JButton btnAdd = new JButton("Add Test");
 		btnAdd.setBounds(100, 295, 288, 25);
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addTestCase();
+			}			
+		});
 		contentPane.add(btnAdd);
 		
 		casename = new JTextField();
@@ -120,7 +134,7 @@ public class TestCreator extends JFrame {
 		contentPane.add(exp);
 		exp.setColumns(10);
 		
-		JComboBox type = new JComboBox();
+		type = new JComboBox();
 		type.setModel(new DefaultComboBoxModel(new String[] {"Equality", "Truthy", "Falsy", "Same", "Great", "Less"}));
 		type.setBounds(200, 163, 288, 24);
 		contentPane.add(type);
@@ -132,5 +146,16 @@ public class TestCreator extends JFrame {
 		JButton Save = new JButton("Save test file of selected Source");
 		Save.setBounds(100, 332, 288, 25);
 		contentPane.add(Save);
+	}
+	private void addTestCase(){
+		total=total+"buster.testCase(\""+casename.getText()+"\"," +
+				"{\n\t\""+exp.getText()+"\": function() {\n"
+				+"\t\t"+getAssert()+"("+funcs.getSelectedItem().toString()+"("+params.getText()+"),THIS);\n\t}\n});\n"; // TODO textbox should be added to get value to be tested against, for now it is hard-coded
+		System.out.print(total);
+	}
+
+	private String getAssert() {
+		// TODO Auto-generated method stub
+		return "assert.equals";
 	}
 }
