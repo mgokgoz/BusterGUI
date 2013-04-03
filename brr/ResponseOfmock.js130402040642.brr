@@ -1,0 +1,6 @@
+=======Response File of mock.js=======
+======================================
+Lines	Variable
+=====	==============================
+12	object
+11	cb(xmlhttp.responseText);

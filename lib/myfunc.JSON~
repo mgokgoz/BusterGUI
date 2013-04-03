@@ -1,0 +1,18 @@
+{ type: 'Program',
+  body: 
+   [ { type: 'FunctionDeclaration',
+       id: [Object],
+       params: [Object],
+       defaults: [],
+       body: [Object],
+       rest: null,
+       generator: false,
+       expression: false },
+     { type: 'FunctionDeclaration',
+       id: [Object],
+       params: [Object],
+       defaults: [],
+       body: [Object],
+       rest: null,
+       generator: false,
+       expression: false } ] }

@@ -1,0 +1,235 @@
+<html>
+  <head>
+  	<meta charset="UTF-8">
+	<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <title>ActivWorks Mobile</title>	
+	<script type="text/javascript" charset="utf-8" src="cordova-1.8.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="childbrowser.js"></script>
+    <link rel="stylesheet" type="text/css" href="jquery.mobile-1.1.0.min.css"/>
+    <link rel="stylesheet" href="jqm-icon-pack-2.1-fa.css" />
+	<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="jquery.mobile-1.1.0.min.js"></script>
+	
+
+    
+    <style type="text/css">
+    .ui-page-header-fixed { padding-top: 5.9em; }
+    .ui-btn-icon-top .ui-icon {margin-top:0 !important;}
+
+	.ui-page {
+    	background: transparent url(back.png);
+	}
+	</style>
+    <script type="text/javascript" charset="utf-8">
+    
+    document.addEventListener("deviceready", onDeviceReady, false);
+	var db;
+	var c=0;
+    function onDeviceReady() {
+    	db = window.openDatabase("database", "1.0", "urldb", 200000);
+        document.addEventListener("backbutton", onBackKeyDown, false);      
+        load();
+        navigator.splashscreen.hide();
+        document.addEventListener("offline", onOffline, false);
+        document.addEventListener("online", onOnline, false);
+    }
+    
+
+    function onOffline() {
+        alert("Ağa bağlı değilsiniz");
+    }
+    function onOnline() {  	
+    	if(c>0){
+        	alert("Ağa bağlandınız");
+        	c++;
+    	}
+    	else{
+    		c++;
+    	}
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     // Transaction error callback
+    //
+    function errorCB(err) {
+        console.log("SQL error: "+err.code);
+    }
+
+    // Transaction success callback
+    //
+    function successCB() {
+      	console.log("saved to db");
+        alert("Kaydedildi");
+    } 
+    //save entered url
+    function save(){
+    	db.transaction(populateDB, errorCB, successCB);
+    	 document.getElementById("lurl").innerHTML=document.getElementById("url_").value;
+    }
+    function populateDB(tx) {
+    	tx.executeSql('DROP TABLE IF EXISTS URLTABLE');
+        tx.executeSql('CREATE TABLE IF NOT EXISTS URLTABLE (_id INTEGER, surl TEXT,PRIMARY KEY(_id))');
+        var url=document.getElementById("url_").value;
+        var sql = 'INSERT OR REPLACE INTO URLTABLE (_id,surl) VALUES (1,"'+url+'")';
+        tx.executeSql(sql);
+        document.getElementById("lurl").innerHTML=document.getElementById("url_").value;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Query the database
+    //
+    function load() {
+    	 db.transaction(queryDB, errorCB);
+    }
+    function queryDB(tx) {
+        tx.executeSql('SELECT * FROM URLTABLE', [], querySuccess, errorCB);
+    }
+    // Query the success callback
+    //
+    function querySuccess(tx, results) {
+        var len = results.rows.length;
+        console.log("URL table: " + len + " rows found.");
+        for (var i=0; i<len; i++){//read all rows
+            console.log("Row = " + i + " ID = " + results.rows.item(i)._id + " Data =  " + results.rows.item(i).surl);
+        }
+        document.getElementById("url_").value=results.rows.item(0).surl; //get first row data, ignore rest
+        document.getElementById("lurl").innerHTML=value=results.rows.item(0).surl;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    function go() {
+    	x=window.plugins.childBrowser.showWebPage(document.getElementById("url_").value, { showLocationBar: false });
+    	window.plugins.childBrowser.onClose=exit;
+    }
+    
+    function clearURL(){
+    	var str="";
+    	var x=confirm("URL girdisi temizlenecek");
+    	if (x==true)
+    	  {
+    		document.getElementById("url_").value=str;
+        	document.getElementById("lurl").innerHTML=str;
+    	  }
+    }
+    
+    function exit(){
+    	navigator.app.exitApp();
+    }
+    function onBackKeyDown() { 
+        if ($.mobile.activePage.attr('id') == 'main') { //if main page, exit else go back to main
+        	navigator.app.exitApp(); 
+        } 
+        else { 
+          //history.back(1); 
+        	$.mobile.changePage( "#main", { transition: "slideup" , showLoadMsg: "true"} );
+        } 
+      } 
+   	
+   	function getTodoItem(cb) {
+    var xmlhttp,object="";
+    if (window.XMLHttpRequest) {
+        xmlhttp = new XMLHttpRequest();
+    } else {
+        xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
+    }
+
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            object=xmlhttp.responseText;
+        }
+    };
+	        xmlhttp.open('GET', 'runBusterTest.py', true);
+    xmlhttp.send();
+    alert(object);
+    return object;
+	}
+    
+    </script>
+  </head>
+  <body>
+    <div data-role="page" id="main"  data-theme = "d" style="font-size: 24px">
+	<div data-role="header" data-theme = "d" data-position="fixed">
+	<h1>
+	  
+	</h1>
+	</div>
+	<div data-role=content>
+	<h1> </h1>
+	<ul data-role="listview" >
+	<li data-icon="false">
+		<a href="#dump" onClick="getTodoItem()">		
+        <img src="images/icon.png">
+        <h3><strong>Activ</strong><i>Works</i> Mobile</h3>
+        <p id="lurl"></p>
+    	</a>
+    </li>
+    </ul>
+	</div>
+	<div data-role="footer" data-tap-toggle="false" data-position="fixed" data-theme = "d">
+	<div data-role="navbar" style="font-size: 24px;" data-theme = "d" >
+		<ul>
+			<li><a onClick="exit()" data-icon="off" data-iconpos="bottom">Çıkış</a></li>
+			<li><a href="#help" data-icon="info" data-iconpos="top">Yardım</a></li>
+			<li><a href="#second" data-icon="wrench" data-iconpos="top">Ayarlar</a></li>
+		</ul>
+	</div>
+	</div>
+	</div>
+	<div data-role="page" id="second" data-theme = "d">
+	<div data-role="header" data-theme = "d" data-position="fixed">
+	<a href=#main data-icon="arrow-l" >Geri</a>
+	<h1>
+	Ayarlar
+	</h1>
+	</div>
+	<div data-role= "content">
+	<!--<div data-role="fieldcontain">-->
+	<label for="name">
+	Adres:
+	</label>
+	<input type="text"  id="url_" value="" />
+	<!--</div>-->
+		<div class="ui-grid-a">
+		<div class="ui-block-a"><input type=button value="Temizle" onClick="getTodoItem()" data-icon="trash"  ></div>
+		<div class="ui-block-b"><input type=button value="Geri al" onClick="load()" data-icon="back"  ></div>	   
+	</div>
+	<div class="ui-grid-solo">
+		<div class="ui-block-a"><input type=button value="Kaydet" onClick="save()" data-icon="save"  ></div>
+	</div>
+    </div>
+	<div data-role="footer" data-tap-toggle="false" data-position="fixed" data-theme = "d">
+	<div data-role="navbar" style="font-size: 24px;" data-theme = "d" >
+		<ul>
+			<li><a onClick="getTodoItem()" data-icon="off" data-iconpos="bottom">Çıkış</a></li>
+			<li><a href="#help" data-icon="info" data-iconpos="top">Yardım</a></li>
+		</ul>
+	</div>
+	</div>
+	</div>
+	<div data-role="page" id="help"  data-theme = "d">
+	<div data-role="header" data-theme = "d" data-position="fixed">
+	<a href=#main data-icon="arrow-l">Geri</a>
+	<h1>
+	Yardım  
+	</h1>
+	</div>
+	<div data-role= "content">
+	<h1>Adres Girme</h1>
+	<p>Adres alanına ActivWorks Mobile adresini giriniz.<br />	Ör: http://myserver.com:8080/activworks-mobile/</p>
+	<p>1. Girdiğiniz adreste bir değişiklik yapmak için adres alanına doknup, gerekli düzeltmeleri yapabilirsiniz.</p>
+	<p>2. Yeni bir adres girmek istiyorsanız, "Temizle" tuşunu kullanınız.</p>
+	<p>3. Yanlış bir adres değişikliği yaptı iseniz, "Geri al" tuşu ile önceki adresi yükleyebilirsiniz.</p>
+	<h1>Ayarları Kaydetme</h1>
+	<p>Girdiğiniz adresin kalıcı olmasını istiyorsanız "Kaydet" tuşu ile kaydediniz. Girdiğiniz adres sonraki oturumlarınızda otomatik olarak yüklenecektir.</p>
+	<p>1. Otomatik olarak yüklenen adres, "ActivWorks Mobile" tuşunun altında belirtilir. Kaydettiğiniz adres belirmiyor ise "Ayarlar" menüsünden tekrar adres giriniz.</p>
+	</div>
+	<div data-role="footer" data-tap-toggle="false" data-position="fixed" data-theme = "d">
+	<div data-role="navbar" style="font-size: 24px;" >
+		<ul>
+			<li><a onClick="exit()" data-icon="off" data-iconpos="bottom">Çıkış</a></li>
+			<li><a href="#second" data-icon="wrench" data-iconpos="top">Ayarlar</a></li>
+		</ul>
+	</div>
+	</div>
+	</div>
+	<div data-role="page" id="dump"  data-theme = "d">
+	</div>
+  </body>
+</html>

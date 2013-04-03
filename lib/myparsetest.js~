@@ -1,0 +1,6 @@
+function abc(a,b,c){
+	var x=a;
+  	var y=b;
+  	var z=c;
+  	return x+y+z;
+}
